@@ -30,4 +30,18 @@ class CMSTest < MiniTest::Test
     assert_equal "text/plain", last_response["Content-Type"]
     assert_equal File.new("#{ROOT}/data/history.txt").read, last_response.body
   end
+
+  def test_nonexistent_file
+    nonexistent_file = "does_not_exist.txt"
+
+    get "/#{nonexistent_file}"
+    assert_equal 302, last_response.status
+
+    get last_response["Location"]
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "#{nonexistent_file} does not exist"
+
+    get "/"
+    refute_includes last_response.body, "#{nonexistent_file} does not exist"
+  end
 end
