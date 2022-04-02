@@ -1,0 +1,49 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    coderay (1.1.3)
+    erubis (2.7.0)
+    method_source (1.0.0)
+    minitest (5.15.0)
+    multi_json (1.15.0)
+    mustermann (1.1.1)
+      ruby2_keywords (~> 0.0.1)
+    pry (0.14.1)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+    rack (2.2.3)
+    rack-protection (2.2.0)
+      rack
+    rack-test (1.1.0)
+      rack (>= 1.0, < 3)
+    rake (13.0.6)
+    ruby2_keywords (0.0.5)
+    sinatra (2.2.0)
+      mustermann (~> 1.0)
+      rack (~> 2.2)
+      rack-protection (= 2.2.0)
+      tilt (~> 2.0)
+    sinatra-contrib (2.2.0)
+      multi_json
+      mustermann (~> 1.0)
+      rack-protection (= 2.2.0)
+      sinatra (= 2.2.0)
+      tilt (~> 2.0)
+    tilt (2.0.10)
+    webrick (1.7.0)
+
+PLATFORMS
+  x86_64-darwin-21
+
+DEPENDENCIES
+  erubis
+  minitest
+  pry
+  rack-test
+  rake
+  sinatra
+  sinatra-contrib
+  webrick
+
+BUNDLED WITH
+   2.3.7
