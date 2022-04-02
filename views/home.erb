@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles/main.css">
   </head>
   <body>
+    <% if session[:message] %>
+      <%= session.delete(:message) %>
+    <% end %>
     <ul>
       <% @files.each do |file|%>
         <li><a href="/<%= file %>"><%= file %></a></li>
