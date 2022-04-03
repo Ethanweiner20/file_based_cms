@@ -1,32 +1,89 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
-
-# Guarantees that we access the root directory of `cms.rb`
-ROOT = File.expand_path(__dir__)
+require 'redcarpet'
 
 configure do
   enable :sessions
   set :session_secret, "secret"
 end
 
-def load_files
-  Dir.glob("#{ROOT}/data/*").map { |path| File.basename(path) }
+# HELPERS
+
+# data_path : _ -> String
+# Retrieves the path where data is stored, dependent on environment
+def data_path
+  if ENV["RACK_ENV"] == "test"
+    File.expand_path('test/data', __dir__)
+  else
+    File.expand_path('data', __dir__)
+  end
 end
 
+def file_path(file_name)
+  File.join(data_path, file_name)
+end
+
+def load_files
+  Dir.glob(File.join(data_path, "*")).map { |path| File.basename(path) }
+end
+
+def load_file_content(path)
+  extension = File.extname(path)
+  content = File.read(path)
+
+  case extension
+  when ".txt"
+    headers["Content-Type"] = "text/plain"
+    content
+  when ".md"
+    render_markdown(content)
+  end
+end
+
+def render_markdown(content)
+  markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+  markdown.render(content)
+end
+
+# ROUTES
+
+# Render home page
 get '/' do
   @files = load_files
   erb :home
 end
 
+# Render a file's content
 get '/:file' do
-  file_path = "#{ROOT}/data/#{params[:file]}"
+  file_name = params[:file]
+  path = file_path(file_name)
 
-  if File.exist?(file_path)
-    headers["Content-Type"] = "text/plain"
-    File.read(file_path)
+  if File.exist?(path)
+    load_file_content(path)
   else
-    session[:message] = "#{params[:file]} does not exist."
+    session[:message] = "#{file_name} does not exist."
     redirect "/"
   end
+end
+
+# Render edit file form
+get '/:file/edit' do
+  file_name = params[:file]
+  path = file_path(file_name)
+
+  @current_content = File.read(path)
+
+  erb :edit_file
+end
+
+# Update the file
+post '/:file' do
+  new_content = params["new-content"]
+  file_name = params[:file]
+  path = file_path(file_name)
+
+  File.write(path, new_content)
+  session[:message] = "#{file_name} has been updated."
+  redirect "/"
 end
