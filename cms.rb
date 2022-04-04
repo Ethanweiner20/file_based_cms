@@ -37,7 +37,7 @@ def load_file_content(path)
     headers["Content-Type"] = "text/plain"
     content
   when ".md"
-    render_markdown(content)
+    erb render_markdown(content)
   end
 end
 
@@ -52,6 +52,24 @@ end
 get '/' do
   @files = load_files
   erb :home
+end
+
+# Add new file
+get '/new' do
+  erb :new_file
+end
+
+post '/create' do
+  file_name = params["file-name"].strip
+  if file_name.empty?
+    session[:message] = "A name is required."
+    status 422
+    erb :new_file
+  else
+    File.new(file_path(file_name), 'w+')
+    session[:message] = "#{file_name} has been created."
+    redirect '/'
+  end
 end
 
 # Render a file's content

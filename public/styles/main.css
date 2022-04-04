@@ -1,7 +1,18 @@
+body {
+  padding: 1em;
+  font-family: sans-serif;
+}
+
 form dd {
   margin-left: 0;
 }
 
 form dl {
   margin: 0;
+}
+
+.message {
+  background-color: #FFFF99;
+  padding: 10px;
+  margin-top: 0;
 }

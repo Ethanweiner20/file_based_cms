@@ -27,6 +27,8 @@ class CMSTest < MiniTest::Test
     end
   end
 
+  # Home Page
+
   def test_index
     create_document("about.txt")
     create_document("changes.txt")
@@ -38,6 +40,8 @@ class CMSTest < MiniTest::Test
     assert_includes body, "about.txt"
     assert_includes body, "changes.txt"
   end
+
+  # Document Viewing
 
   def test_viewing_text_document
     create_document("history.txt", "History!")
@@ -71,6 +75,8 @@ class CMSTest < MiniTest::Test
     assert_includes last_response.body, "<h1>ABOUT</h1>"
   end
 
+  # Document Editing
+
   def test_editing_file
     create_document("about.txt", "About")
 
@@ -93,5 +99,47 @@ class CMSTest < MiniTest::Test
     get "/about.txt"
     assert_equal 200, last_response.status
     assert_includes last_response.body, "New About Content!"
+  end
+
+  # Document Creation
+  def test_new_document_form
+    get "/new"
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, "<input"
+  end
+
+  def test_empty_name_creation
+    post "/create", "file-name" => ""
+
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, "A name is required."
+
+    post "/create", "file-name" => "     "
+
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, "A name is required."
+  end
+
+  def test_document_creation
+    post "/create", "file-name" => "new_doc.txt"
+
+    assert_equal 302, last_response.status
+    get last_response["Location"] # Back to index
+
+    # Verifies file was created
+    assert_includes last_response.body, "new_doc.txt has been created"
+    assert_includes last_response.body, "new_doc.txt"
+  end
+
+  def test_document_creation_with_whitespace
+    post "/create", "file-name" => "   new_doc1.txt  "
+
+    assert_equal 302, last_response.status
+    get last_response["Location"] # Back to index
+
+    # Verifies file was created
+    assert_includes last_response.body, "new_doc1.txt has been created"
+    assert_includes last_response.body, "new_doc1.txt"
   end
 end
