@@ -72,6 +72,14 @@ post '/create' do
   end
 end
 
+# Delete a file
+post '/:file/delete' do
+  file_name = params["file"]
+  File.delete(file_path(file_name))
+  session[:message] = "#{file_name} was deleted."
+  redirect '/'
+end
+
 # Render a file's content
 get '/:file' do
   file_name = params[:file]

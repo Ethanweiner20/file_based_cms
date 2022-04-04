@@ -125,21 +125,33 @@ class CMSTest < MiniTest::Test
     post "/create", "file-name" => "new_doc.txt"
 
     assert_equal 302, last_response.status
-    get last_response["Location"] # Back to index
 
-    # Verifies file was created
+    get last_response["Location"]
     assert_includes last_response.body, "new_doc.txt has been created"
     assert_includes last_response.body, "new_doc.txt"
   end
 
   def test_document_creation_with_whitespace
     post "/create", "file-name" => "   new_doc1.txt  "
-
     assert_equal 302, last_response.status
-    get last_response["Location"] # Back to index
 
-    # Verifies file was created
+    get last_response["Location"] # Back to index
     assert_includes last_response.body, "new_doc1.txt has been created"
+
+    get '/' # Remove message
     assert_includes last_response.body, "new_doc1.txt"
+  end
+
+  def test_document_deletion
+    create_document("about.txt", "About")
+
+    post "/about.txt/delete"
+    assert_equal 302, last_response.status
+
+    get last_response["Location"]
+    assert_includes last_response.body, "about.txt was deleted."
+
+    get '/' # Remove message
+    refute_includes last_response.body, 'about.txt'
   end
 end
