@@ -10,3 +10,14 @@
   <% end %>
 </ul>
 <a href="/new">New Document</a>
+<% if session[:user] %>
+  <form action="/users/signout" method="post">
+    <p class="user-status">Signed in as <%= session[:user] %>.
+      <button type="submit">Sign Out</button>
+    </p>
+  </form>
+<% else %>
+  <form action="/users/signin" method="get">
+    <button type="submit">Sign In</button>
+  </form>
+<% end %>

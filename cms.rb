@@ -54,6 +54,32 @@ get '/' do
   erb :home
 end
 
+# Authentication
+get '/users/signin' do
+  erb :signin
+end
+
+post '/users/signin' do
+  username = params[:username]
+  password = params[:password]
+
+  if username == "admin" && password == "secret"
+    session[:user] = username
+    session[:message] = "Welcome!"
+    redirect "/"
+  else
+    session[:message] = "Invalid Credentials"
+    status 422
+    erb :signin
+  end
+end
+
+post '/users/signout' do
+  session.delete(:user)
+  session[:message] = "You have been signed out."
+  redirect '/'
+end
+
 # Add new file
 get '/new' do
   erb :new_file
