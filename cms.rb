@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 require 'redcarpet'
+require 'yaml'
 
 configure do
   enable :sessions
@@ -10,8 +11,6 @@ end
 
 # HELPERS
 
-# data_path : _ -> String
-# Retrieves the path where data is stored, dependent on environment
 def data_path
   if ENV["RACK_ENV"] == "test"
     File.expand_path('test/data', __dir__)
@@ -20,7 +19,14 @@ def data_path
   end
 end
 
-def file_path(file_name)
+def load_user_credentials
+  is_test = ENV["RACK_ENV"] == "test"
+  prefix = is_test ? 'test/' : ''
+  credentials_path = File.expand_path("#{prefix}config/users.yml", __dir__)
+  YAML.load_file(credentials_path)
+end
+
+def document_path(file_name)
   File.join(data_path, file_name)
 end
 
@@ -50,6 +56,14 @@ def authenticated?
   session.key?(:user)
 end
 
+# valid_credentials? : String String -> Boolean
+# Do the credentials point to a valid user or administrator?
+def valid_credentials?(username, password)
+  users = load_user_credentials
+  users.key?(username) && users[username] == password
+end
+
+# authenticate
 # Short circuit a route if the user is not authenticated
 def authenticate
   unless authenticated?
@@ -75,7 +89,7 @@ post '/users/signin' do
   username = params[:username]
   password = params[:password]
 
-  if username == "admin" && password == "secret"
+  if valid_credentials?(username, password)
     session[:user] = username
     session[:message] = "Welcome!"
     redirect "/"
@@ -108,7 +122,7 @@ post '/create' do
     status 422
     erb :new_file
   else
-    File.new(file_path(file_name), 'w+')
+    File.new(document_path(file_name), 'w+')
     session[:message] = "#{file_name} has been created."
     redirect '/'
   end
@@ -119,7 +133,7 @@ post '/:file/delete' do
   authenticate
 
   file_name = params["file"]
-  File.delete(file_path(file_name))
+  File.delete(document_path(file_name))
   session[:message] = "#{file_name} was deleted."
   redirect '/'
 end
@@ -127,7 +141,7 @@ end
 # Render a file's content
 get '/:file' do
   file_name = params[:file]
-  path = file_path(file_name)
+  path = document_path(file_name)
 
   if File.exist?(path)
     load_file_content(path)
@@ -142,7 +156,7 @@ get '/:file/edit' do
   authenticate
 
   file_name = params[:file]
-  path = file_path(file_name)
+  path = document_path(file_name)
 
   @current_content = File.read(path)
 
@@ -155,7 +169,7 @@ post '/:file' do
 
   new_content = params["new-content"]
   file_name = params[:file]
-  path = file_path(file_name)
+  path = document_path(file_name)
 
   File.write(path, new_content)
   session[:message] = "#{file_name} has been updated."

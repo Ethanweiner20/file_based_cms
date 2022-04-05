@@ -54,3 +54,17 @@
   - Check if session includes admin user
   - If so -> render as normal
   - Otherwise -> return 401 error, change session message, redirect to index
+
+# Storing User Accounts
+
+## Requirements
+
+- Admin should be able to modify list of users who may sign into application
+
+## Implementation
+
+- Create a configuration file (`users.yaml`)
+  - Store credentials as a hash (keys = users, values = passwords)
+- Update signin logic
+  - Compare input w/ all user/password combos (not just admin/secret)
+- _Note_: No need to update `authenticate`: as long as a user exists in the session, we're authenticated

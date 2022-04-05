@@ -106,7 +106,7 @@ class CMSTest < MiniTest::Test
 
   def test_file_update
     post "/about.txt", { "new-content" => "New About Content!" }, admin_session
-    assert_equal "New About Content!", File.read(file_path("about.txt"))
+    assert_equal "New About Content!", File.read(document_path("about.txt"))
     assert_equal 302, last_response.status
     assert_equal "about.txt has been updated.", session[:message]
 
