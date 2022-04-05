@@ -46,6 +46,18 @@ def render_markdown(content)
   markdown.render(content)
 end
 
+def authenticated?
+  session.key?(:user)
+end
+
+# Short circuit a route if the user is not authenticated
+def authenticate
+  unless authenticated?
+    session[:message] = "You must be signed in to do that."
+    redirect '/'
+  end
+end
+
 # ROUTES
 
 # Render home page
@@ -82,10 +94,14 @@ end
 
 # Add new file
 get '/new' do
+  authenticate
+
   erb :new_file
 end
 
 post '/create' do
+  authenticate
+
   file_name = params["file-name"].strip
   if file_name.empty?
     session[:message] = "A name is required."
@@ -100,6 +116,8 @@ end
 
 # Delete a file
 post '/:file/delete' do
+  authenticate
+
   file_name = params["file"]
   File.delete(file_path(file_name))
   session[:message] = "#{file_name} was deleted."
@@ -121,6 +139,8 @@ end
 
 # Render edit file form
 get '/:file/edit' do
+  authenticate
+
   file_name = params[:file]
   path = file_path(file_name)
 
@@ -131,6 +151,8 @@ end
 
 # Update the file
 post '/:file' do
+  authenticate
+
   new_content = params["new-content"]
   file_name = params[:file]
   path = file_path(file_name)

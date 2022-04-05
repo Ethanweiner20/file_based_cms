@@ -30,3 +30,27 @@
     - Ensures error message will display
   - How can we create an "Invalid Credentials" error message?
 - Idea: Use a before hook to redirect users to index if they aren't signed in
+
+# Restricting Actions to Authenticated Users
+
+## Requirements
+
+- We can still allow unauthenticated users to view the files; just not modify them
+- For the following actions:
+  1. Verify user is authenticated
+  2. If not --> redirect to index + add session message
+  3. If they are --> proceed as normal
+  - Visit the edit page
+  - Submit changes
+  - Visit new doc page
+  - Submit new doc
+  - Delete doc
+
+## Implementation
+
+- Modify tests for restricted to require authenticated state (`admin_session`)
+- Add tests for all restricted actions for unauthenticated users
+- For all routes w/ a certain metadata:
+  - Check if session includes admin user
+  - If so -> render as normal
+  - Otherwise -> return 401 error, change session message, redirect to index
