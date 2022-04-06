@@ -86,7 +86,6 @@ end
 
 # Render home page
 get '/' do
-  binding.pry
   @files = load_files
   erb :home
 end

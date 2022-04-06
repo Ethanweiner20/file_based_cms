@@ -1,3 +1,2 @@
-{ 
-  admin: "$2a$12$A/MdftL5l3VgcNBeFygZbeHQGz6K/XY7.Xpaml7HLMi3lHYDl2wLu"
-}
+# Add users for testing here
+{ admin: "$2a$12$A/MdftL5l3VgcNBeFygZbeHQGz6K/XY7.Xpaml7HLMi3lHYDl2wLu" }
