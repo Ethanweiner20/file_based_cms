@@ -68,3 +68,15 @@
 - Update signin logic
   - Compare input w/ all user/password combos (not just admin/secret)
 - _Note_: No need to update `authenticate`: as long as a user exists in the session, we're authenticated
+
+# Hashing Passwords
+
+## Requirements
+
+- Use the `bcrypt` algorithm to hash passwords
+
+## Implementation
+
+- [Admin] Create encoded version of passwords w/ irb
+  - Store encoded passwords in `users.yml`
+- Upon sign-in: Compare _hashed_ version of password input

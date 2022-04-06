@@ -3,7 +3,6 @@ ENV["RACK_ENV"] = "test"
 require 'minitest/autorun'
 require "rack/test"
 require "fileutils"
-require "pry"
 
 require_relative '../cms'
 

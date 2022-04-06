@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
+gem "bcrypt"
 gem "erubis"
 gem "minitest"
 gem "pry"

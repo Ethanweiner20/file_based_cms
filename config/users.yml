@@ -1,4 +1,5 @@
+# Format: username: hashed_password
 {
-  ethanweiner20: Ittiait2002!,
-  graceweiner20: foofoobunny
+  ethanweiner20: $2a$12$rCmh2.aoyN6DpE9MSlTxguGNX4Z7/wNX8LDGKvF4J/NNNtMRjdQy.,
+  graceweiner20: $2a$12$FCNI7A6MKM86iGx4UYwbROcKeUhfNKNsTBe9chqOt0mc0R2GvaaEu,
 }

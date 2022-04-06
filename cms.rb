@@ -1,8 +1,11 @@
+require 'bundler/setup' # Needed to import main gems
 require 'sinatra'
 require 'sinatra/reloader'
 require 'tilt/erubis'
 require 'redcarpet'
 require 'yaml'
+require 'bcrypt'
+require 'pry'
 
 configure do
   enable :sessions
@@ -60,7 +63,14 @@ end
 # Do the credentials point to a valid user or administrator?
 def valid_credentials?(username, password)
   users = load_user_credentials
-  users.key?(username) && users[username] == password
+
+  # BCrypt#==: Compare plaintext password to encrypted password
+  if users.key?(username)
+    encoded_password = BCrypt::Password.new(users[username])
+    encoded_password == password
+  else
+    false
+  end
 end
 
 # authenticate
@@ -76,6 +86,7 @@ end
 
 # Render home page
 get '/' do
+  binding.pry
   @files = load_files
   erb :home
 end
